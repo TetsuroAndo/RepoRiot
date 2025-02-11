@@ -8,13 +8,16 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
-  password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  repos     Repo[]
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  username    String
+  githubId    String?  @unique
+  accessToken String?
+  name        String?
+  password    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  repos       Repo[]
 }
 
 model Repo {

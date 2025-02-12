@@ -6,7 +6,7 @@ import { isDeepStrictEqual } from 'util';
 interface GitHubProfile {
   id: string;
   username: string;
-  emails: Array<{ value: string }>;
+  emails?: Array<{ value: string }>;
 }
 
 interface User {
@@ -23,7 +23,7 @@ passport.serializeUser((user: Express.User, done) => {
   done(null, (user as User).id);
 });
 
-passport.deserializeUser(async (id: number, done) => {
+passport.deserializeUser(async (id: number, done: (err: any, user?: Express.User | false | null) => void) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id }

@@ -1,7 +1,10 @@
-import { Controller, Route, Post, Get, Path, Body, Response, Example, Security } from '@tsoa/runtime';
+import { Controller, Route, Post, Get, Path, Body, Response, Example, Security, Request } from '@tsoa/runtime';
 import { User, CreateUserRequest, AuthResponse } from '../types/user';
 import * as userService from '../services/userService';
-import { Request as ExpressRequest } from 'express';
+
+interface UserAuthRequest {
+  user?: User;
+}
 
 @Route('users')
 export class UserController extends Controller {
@@ -56,7 +59,7 @@ export class UserController extends Controller {
   @Get('me')
   @Security('jwt')
   @Response(401, 'Not Authenticated')
-  public async getCurrentUser(request: ExpressRequest): Promise<User> {
+  public async getCurrentUser(@Request() request: UserAuthRequest): Promise<User> {
     if (!request.user) {
       this.setStatus(401);
       throw new Error('Not authenticated');
@@ -68,7 +71,7 @@ export class UserController extends Controller {
    * GitHub OAuth callback
    */
   @Get('auth/github/callback')
-  public async githubCallback(request: ExpressRequest): Promise<void> {
+  public async githubCallback(@Request() request: UserAuthRequest): Promise<void> {
     this.setHeader('Location', '/dashboard');
     this.setStatus(302);
   }
@@ -77,7 +80,7 @@ export class UserController extends Controller {
    * Logout current user
    */
   @Get('logout')
-  public async logout(request: ExpressRequest): Promise<void> {
+  public async logout(@Request() request: UserAuthRequest): Promise<void> {
     await new Promise<void>((resolve) => {
       (request as any).logout(() => resolve());
     });

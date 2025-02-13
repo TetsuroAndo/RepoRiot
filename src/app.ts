@@ -24,6 +24,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
+app.get('/', (req, res) => {
+  res.json({ message: 'Welcome to RepoRiot API' });
+});
+
 app.use('/api/users', userRoutes);
 app.use('/api/repos', repoRoutes);
 

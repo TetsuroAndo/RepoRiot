@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -9,40 +9,155 @@ datasource db {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  username    String
-  githubId    String?  @unique
-  gitlabId    String?  @unique
-  accessToken String?
-  name        String?
-  avatarUrl   String?
-  password    String?
-  provider    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  repos       Repo[]
+  id            Int             @id @default(autoincrement())
+  githubId      String?         @unique
+  gitlabId      String?         @unique
+  email         String          @unique
+  username      String          @unique
+  name          String?
+  accessToken   String?
+  refreshToken  String?
+  avatarUrl     String?
+  provider      String?
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  repos         Repo[]
+  subscriptions Subscription[]
+  notifications Notification[]
+  payments      Payment[]
+  settings      UserSettings?
+  ArticleRating ArticleRating[]
 }
 
 model Repo {
-  id          Int      @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   description String?
   url         String
   userId      Int
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  stars       Int      @default(0)
-  forks       Int      @default(0)
+  user        User      @relation(fields: [userId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  stars       Int       @default(0)
+  forks       Int       @default(0)
   language    String?
-  tags        Tag[]    @relation("RepoTags")
+  tags        Tag[]     @relation("RepoTags")
+  articles    Article[]
+}
+
+model Article {
+  id            Int             @id @default(autoincrement())
+  title         String
+  content       String          @db.Text
+  repoId        Int
+  version       Int             @default(1)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  repository    Repo            @relation(fields: [repoId], references: [id])
+  tags          Tag[]           @relation("ArticleTags")
+  comments      Comment[]
+  cache         ArticleCache?
+  statistics    Statistics?
+  ArticleRating ArticleRating[]
+}
+
+model ArticleCache {
+  id           Int      @id @default(autoincrement())
+  articleId    Int      @unique
+  cacheContent String   @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  article      Article  @relation(fields: [articleId], references: [id])
+}
+
+model ArticleRating {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  articleId Int
+  rating    Int // 評価値（例: 1から5の星評価）
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+  article   Article  @relation(fields: [articleId], references: [id])
+
+  @@unique([userId, articleId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  articleId Int
+  article   Article  @relation(fields: [articleId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  repos     Repo[]    @relation("RepoTags")
+  articles  Article[] @relation("ArticleTags")
+}
+
+model UserSettings {
+  id                   Int      @id @default(autoincrement())
+  userId               Int      @unique
+  notificationsEnabled Boolean  @default(true)
+  theme                String   @default("light")
+  user                 User     @relation(fields: [userId], references: [id])
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Statistics {
+  id        Int      @id @default(autoincrement())
+  articleId Int      @unique
+  views     Int      @default(0)
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  article   Article  @relation(fields: [articleId], references: [id])
+}
+
+model Subscription {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  plan      String // Free, Premium など
+  status    String // Active, Cancelled など
+  startDate DateTime  @default(now())
+  endDate   DateTime?
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Payment {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  amount    Int
+  status    String // Successful, Failed など
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Plan {
   id          Int      @id @default(autoincrement())
   name        String   @unique
+  description String?
+  price       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  repos       Repo[]   @relation("RepoTags")
 }

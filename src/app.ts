@@ -38,24 +38,24 @@ app.get('/', (req, res) => {
 app.use('/api/users', userRoutes);
 app.use('/api/repos', repoRoutes);
 
-// Error handler
+// Global error handler
 app.use(function errorHandler(err: any, req: ExRequest, res: ExResponse, next: NextFunction): ExResponse | void {
-  if (err?.status === 401) {
-    return res.status(401).json({
-      message: 'Unauthorized'
-    });
-  }
-  if (err?.status === 404) {
-    return res.status(404).json({
-      message: 'Not Found'
-    });
-  }
-  if (err?.status === 400) {
-    return res.status(400).json({
-      message: 'Bad Request'
-    });
-  }
-  return next(err);
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  // Log error for debugging (consider using a proper logging service in production)
+  console.error(`Error ${status}: ${message}`, {
+    path: req.path,
+    method: req.method,
+    error: err
+  });
+
+  return res.status(status).json({
+    status: 'error',
+    message: message,
+    // Only include stack trace in development
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
 });
 
 // Swagger documentation

@@ -2,10 +2,13 @@ import express, { Response as ExResponse, Request as ExRequest, NextFunction } f
 import cors from 'cors';
 import passport from 'passport';
 import session from 'express-session';
+import swaggerUi from 'swagger-ui-express';
 import userRoutes from './routes/userRoutes';
 import repoRoutes from './routes/repoRoutes';
-import { RegisterRoutes } from './routes/routes';
 import './config/passport';
+
+// Import swagger document
+const swaggerDocument = require('../public/swagger.json');
 
 const app = express();
 
@@ -23,9 +26,12 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Serve static files from public directory
+app.use(express.static('public'));
+
 // Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to RepoRiot API' });
+  res.sendFile('index.html', { root: './public' });
 });
 
 app.use('/api/users', userRoutes);
@@ -51,7 +57,7 @@ app.use(function errorHandler(err: any, req: ExRequest, res: ExResponse, next: N
   return next(err);
 });
 
-// Serve generated swagger docs
-app.use('/docs', express.static('public'));
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 export default app;

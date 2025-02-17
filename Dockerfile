@@ -13,10 +13,13 @@ RUN npm install
 # アプリケーションコードをコンテナにコピー
 COPY . .
 
-# TypeScriptをビルド
+# TypeScriptをビルドしてSwaggerドキュメントを生成
 RUN npm run build
 
-# ポート5000を公開
+# publicディレクトリが存在することを確認
+RUN mkdir -p public
+
+# ポート3000を公開
 EXPOSE 5000
 
 # コンテナ起動時に実行するコマンド

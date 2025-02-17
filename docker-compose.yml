@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   backend:
@@ -6,34 +6,41 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "${PORT:-5000}:${PORT:-5000}"
     depends_on:
       db:
         condition: service_healthy
+    env_file:
+      - .env
     environment:
-      - NODE_ENV=development
-      - DATABASE_URL=postgresql://user:password@db:5432/reporiot_db
-      - PORT=3000
+      - DATABASE_URL=${DATABASE_URL:-postgresql://user:password@localhost:5432/reporiot_db}
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
+      - /usr/src/app/public
     networks:
       - app-network
 
   db:
-    image: postgres:13
+    image: postgres:17
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5432}:5432"
+    env_file:
+      - .env
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: reporiot_db
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-reporiot_db}
     volumes:
       - pgdata:/var/lib/postgresql/data
     networks:
       - app-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d reporiot_db"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-user} -d ${DB_NAME:-reporiot_db}",
+        ]
       interval: 5s
       timeout: 5s
       retries: 5

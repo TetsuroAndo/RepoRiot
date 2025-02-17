@@ -13,6 +13,7 @@ router.get('/auth/github/callback',
   (req, res) => {
     const controller = new UserController();
     controller.githubCallback(req);
+    console.log('GitHub OAuth authentication successful!');
     res.redirect('/dashboard');
   }
 );

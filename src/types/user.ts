@@ -1,14 +1,7 @@
-export interface User {
-  id: number;
-  email: string;
-  username: string;
-  githubId: string | null;
-  accessToken: string | null;
-  name: string | null;
-  password: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { User as PrismaUser } from '@prisma/client';
+
+// PrismaのUser型をベースにしたアプリケーションのUser型
+export type User = PrismaUser;
 
 export interface CreateUserRequest {
   provider: 'github' | 'gitlab';

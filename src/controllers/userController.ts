@@ -4,9 +4,10 @@ import * as userService from '../services/userService';
 import { Request as ExpressRequest } from 'express';
 import { Session } from 'express-session';
 import { LogOutOptions } from 'passport';
+import { transformUser } from '../utils/userTransform';
 
 interface UserAuthRequest extends ExpressRequest {
-  user?: User;
+  user?: Express.User;
   logout: {
     (options: LogOutOptions, done: (err: any) => void): void;
     (done: (err: any) => void): void;
@@ -26,9 +27,12 @@ export class UserController extends Controller {
       email: 'user@example.com',
       username: 'username',
       githubId: null,
+      gitlabId: null,
       accessToken: null,
       name: null,
+      avatarUrl: null,
       password: null,
+      provider: null,
       createdAt: new Date(),
       updatedAt: new Date()
     },
@@ -40,7 +44,7 @@ export class UserController extends Controller {
     const token = userService.generateToken(user.id);
     
     return {
-      user,
+      user: transformUser(user),
       message: 'User created successfully',
       token
     };
@@ -56,9 +60,12 @@ export class UserController extends Controller {
     email: 'user@example.com',
     username: 'username',
     githubId: null,
+    gitlabId: null,
     accessToken: null,
     name: null,
+    avatarUrl: null,
     password: null,
+    provider: null,
     createdAt: new Date(),
     updatedAt: new Date()
   })
@@ -68,7 +75,7 @@ export class UserController extends Controller {
       this.setStatus(404);
       throw new Error('User not found');
     }
-    return user;
+    return transformUser(user);
   }
 
   /**
@@ -82,9 +89,12 @@ export class UserController extends Controller {
     email: 'updated@example.com',
     username: 'updated_username',
     githubId: null,
+    gitlabId: null,
     accessToken: null,
     name: 'Updated Name',
+    avatarUrl: null,
     password: null,
+    provider: null,
     createdAt: new Date(),
     updatedAt: new Date()
   })
@@ -97,7 +107,7 @@ export class UserController extends Controller {
       this.setStatus(404);
       throw new Error('User not found');
     }
-    return user;
+    return transformUser(user);
   }
 
   /**
@@ -116,6 +126,23 @@ export class UserController extends Controller {
 
   /**
    * OAuth callback (GitHub/GitLab共通)
+   * @swagger
+   * /users/auth/{provider}/callback:
+   *   get:
+   *     summary: OAuth callback
+   *     description: GitHub/GitLab OAuth認証後の共通コールバック
+   *     parameters:
+   *       - in: path
+   *         name: provider
+   *         required: true
+   *         schema:
+   *           type: string
+   *           enum: [github, gitlab]
+   *     responses:
+   *       302:
+   *         description: 認証成功時にダッシュボードへリダイレクト
+   *       401:
+   *         description: 認証失敗
    */
   @Get('auth/{provider}/callback')
   public async oauthCallback(@Request() req: UserAuthRequest): Promise<void> {
@@ -128,38 +155,14 @@ export class UserController extends Controller {
 
     const token = userService.generateToken(user.id);
 
-    // セキュアなCookie設定
-    this.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=Lax`);
+    // セキュアなCookie設定（HttpOnly, Secure, SameSite=Lax）
+    this.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=86400`);
     // ダッシュボードへリダイレクト
     this.setHeader('Location', '/dashboard');
     this.setStatus(302);
   }
 
-  /**
-   * GitHub OAuth callback
-   * @swagger
-   * /users/auth/github/callback:
-   *   get:
-   *     summary: GitHub OAuth callback
-   *     description: GitHub OAuth認証後のコールバック
-   *     responses:
-   *       302:
-   *         description: GitHub OAuth認証が成功し、ダッシュボードにリダイレクトされる
-   */
-  @Get('auth/github/callback')
-  public async githubCallback(@Request() req: UserAuthRequest): Promise<void> {
-    const user = req.user;
 
-    if (!user) {
-      this.setStatus(401);
-      throw new Error('Authentication failed');
-    }
-
-    const token = userService.generateToken(user.id);
-    this.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=Lax`);
-    this.setHeader('Location', '/dashboard');
-    this.setStatus(302);
-  }
 
   /**
    * Login user
@@ -184,7 +187,7 @@ export class UserController extends Controller {
     this.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=Lax`);
     return {
       message: 'Login successful',
-      user,
+      user: transformUser(user as User),
       token
     };
   }

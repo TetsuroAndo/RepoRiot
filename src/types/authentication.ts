@@ -10,18 +10,13 @@ export type ExpressAuthenticationFunction = (
   response?: Response
 ) => Promise<User>;
 
+import type { User as PrismaUser } from '@prisma/client';
+
 declare global {
   namespace Express {
-    interface User {
-      id: number;
-      email: string;
-      username: string;
-      githubId: string | null;
-      accessToken: string | null;
-      name: string | null;
-      password: string | null;
-      createdAt: Date;
-      updatedAt: Date;
+    // Prisma の User 型をベースにした Session User 型
+    interface User extends Omit<PrismaUser, 'password'> {
+      password?: string | null;
     }
   }
 }

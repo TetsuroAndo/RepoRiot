@@ -2,11 +2,11 @@ import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github2';
 import { Strategy as GitLabStrategy } from 'passport-gitlab2';
 import { env } from './env';
-import prisma from './prisma';
 import logger from '../utils/logger';
-import { User as PrismaUser } from '@prisma/client';
+import prisma from './prisma';
 import { Profile as GitHubProfile } from 'passport-github2';
 import { Profile as GitLabProfile } from 'passport-gitlab2';
+import type { User } from '@prisma/client';
 
 interface OAuthProfile {
   id: string;
@@ -17,7 +17,17 @@ interface OAuthProfile {
   provider: 'github' | 'gitlab';
 }
 
-type User = PrismaUser;
+import type { User as PrismaUser } from '@prisma/client';
+
+// Express.User の型を拡張
+declare global {
+  namespace Express {
+    // Prisma の User 型をベースにした Session User 型
+    interface User extends Omit<PrismaUser, 'password'> {
+      password?: string | null;
+    }
+  }
+}
 
 passport.serializeUser((user, done) => {
   try {
@@ -31,18 +41,7 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser(async (id: number, done: (err: any, user?: Express.User | false | null) => void) => {
   try {
     const user = await prisma.user.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        email: true,
-        username: true,
-        githubId: true,
-        gitlabId: true,
-        name: true,
-        avatarUrl: true,
-        accessToken: true,
-        provider: true
-      }
+      where: { id }
     });
 
     if (!user) {
@@ -61,7 +60,7 @@ async function handleOAuthProfile(
   accessToken: string,
   refreshToken: string,
   profile: OAuthProfile,
-  done: (error: any, user?: any) => void
+  done: (error: any, user?: Express.User | false | null) => void
 ) {
   try {
     const email = profile.emails?.[0]?.value;
@@ -72,27 +71,22 @@ async function handleOAuthProfile(
     const avatarUrl = profile.photos?.[0]?.value;
     const username = profile.username || profile.displayName || email.split('@')[0];
     
-    const updateData: any = {
+    const updateData = {
       email,
       username,
       name: profile.displayName || username,
       avatarUrl,
       accessToken,
       provider: profile.provider,
+      password: null,  // パスワードは OAuth の場合は null
+      ...(profile.provider === 'github' ? { githubId: profile.id } : {}),
+      ...(profile.provider === 'gitlab' ? { gitlabId: profile.id } : {})
     };
 
-    if (profile.provider === 'github') {
-      updateData.githubId = profile.id;
-    } else if (profile.provider === 'gitlab') {
-      updateData.gitlabId = profile.id;
-    }
-
     const user = await prisma.user.upsert({
-      where: {
-        email,
-      },
+      where: { email },
       update: updateData,
-      create: updateData,
+      create: updateData
     });
 
     done(null, user);

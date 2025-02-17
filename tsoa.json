@@ -16,7 +16,8 @@
   "routes": {
     "routesDir": "src/routes",
     "middleware": "express",
-    "authenticationModule": "src/authentication.ts"
+    "authenticationModule": "src/authentication.ts",
+    "middlewareTemplate": "src/middleware/controllerMiddleware.ts"
   },
   "compilerOptions": {
     "baseUrl": ".",

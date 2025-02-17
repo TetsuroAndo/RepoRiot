@@ -1,19 +1,23 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client'
 import { env } from './env';
 
+// PrismaClient のインスタンスをグローバルに保持
 declare global {
   var prisma: PrismaClient | undefined;
 }
 
-const prisma = global.prisma || new PrismaClient({
+// 開発環境での hot reload 対策として globalThis を使用
+const prisma = globalThis.prisma || new PrismaClient({
   datasources: {
     db: {
       url: env.DATABASE_URL
     }
   },
-  log: env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  log: ['query', 'error', 'warn']
 });
 
-if (env.NODE_ENV !== 'production') global.prisma = prisma;
+if (process.env.NODE_ENV !== 'production') {
+  globalThis.prisma = prisma;
+}
 
 export default prisma;

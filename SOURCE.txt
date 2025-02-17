@@ -1,0 +1,1605 @@
+.
+├── Dockerfile
+├── SOURCE.txt
+├── dist
+│   ├── app.js
+│   ├── authentication.js
+│   ├── config
+│   │   ├── env.js
+│   │   ├── passport.js
+│   │   └── prisma.js
+│   ├── controllers
+│   │   ├── repoController.js
+│   │   └── userController.js
+│   ├── middleware
+│   │   └── validation.js
+│   ├── routes
+│   │   ├── repoRoutes.js
+│   │   ├── routes.js
+│   │   ├── user.js
+│   │   └── userRoutes.js
+│   ├── server.js
+│   ├── services
+│   │   ├── repoService.js
+│   │   └── userService.js
+│   ├── swagger
+│   │   └── swagger.js
+│   └── types
+│       ├── authentication.js
+│       └── user.js
+├── docker-compose.yml
+├── docs
+│   ├── api.md
+│   ├── architecture.md
+│   └── setup.md
+├── genSourceText.sh
+├── node_modules
+│   ├── @prisma
+│   │   └── client -> ../.pnpm/@prisma+client@6.3.1_prisma@6.3.1_typescript@5.7.3__typescript@5.7.3/node_modules/@prisma/client
+│   ├── @tsoa
+│   │   └── runtime -> ../.pnpm/@tsoa+runtime@6.6.0/node_modules/@tsoa/runtime
+│   ├── @types
+│   │   ├── bcrypt -> ../.pnpm/@types+bcrypt@5.0.2/node_modules/@types/bcrypt
+│   │   ├── cors -> ../.pnpm/@types+cors@2.8.17/node_modules/@types/cors
+│   │   ├── express -> ../.pnpm/@types+express@4.17.21/node_modules/@types/express
+│   │   ├── express-session -> ../.pnpm/@types+express-session@1.18.1/node_modules/@types/express-session
+│   │   ├── jsonwebtoken -> ../.pnpm/@types+jsonwebtoken@9.0.8/node_modules/@types/jsonwebtoken
+│   │   ├── node -> ../.pnpm/@types+node@20.17.19/node_modules/@types/node
+│   │   ├── passport -> ../.pnpm/@types+passport@1.0.17/node_modules/@types/passport
+│   │   ├── passport-github2 -> ../.pnpm/@types+passport-github2@1.2.9/node_modules/@types/passport-github2
+│   │   └── swagger-ui-express -> ../.pnpm/@types+swagger-ui-express@4.1.7/node_modules/@types/swagger-ui-express
+│   ├── bcrypt -> .pnpm/bcrypt@5.1.1/node_modules/bcrypt
+│   ├── cors -> .pnpm/cors@2.8.5/node_modules/cors
+│   ├── dotenv -> .pnpm/dotenv@16.4.7/node_modules/dotenv
+│   ├── express -> .pnpm/express@4.21.2/node_modules/express
+│   ├── express-session -> .pnpm/express-session@1.18.1/node_modules/express-session
+│   ├── express-validator -> .pnpm/express-validator@7.2.1/node_modules/express-validator
+│   ├── glob -> .pnpm/glob@11.0.1/node_modules/glob
+│   ├── jsonwebtoken -> .pnpm/jsonwebtoken@9.0.2/node_modules/jsonwebtoken
+│   ├── nodemon -> .pnpm/nodemon@3.1.9/node_modules/nodemon
+│   ├── passport -> .pnpm/passport@0.7.0/node_modules/passport
+│   ├── passport-github2 -> .pnpm/passport-github2@0.1.12/node_modules/passport-github2
+│   ├── passport-gitlab2 -> .pnpm/passport-gitlab2@5.0.0/node_modules/passport-gitlab2
+│   ├── prisma -> .pnpm/prisma@6.3.1_typescript@5.7.3/node_modules/prisma
+│   ├── swagger-ui-express -> .pnpm/swagger-ui-express@5.0.1_express@4.21.2/node_modules/swagger-ui-express
+│   ├── ts-node -> .pnpm/ts-node@10.9.2_@types+node@20.17.19_typescript@5.7.3/node_modules/ts-node
+│   ├── tsoa -> .pnpm/tsoa@6.6.0/node_modules/tsoa
+│   ├── typescript -> .pnpm/typescript@5.7.3/node_modules/typescript
+│   ├── winston -> .pnpm/winston@3.17.0/node_modules/winston
+│   └── zod -> .pnpm/zod@3.24.2/node_modules/zod
+├── package.json
+├── pnpm-lock.yaml
+├── prisma
+│   ├── migrations
+│   │   ├── 20250213134808_
+│   │   │   └── migration.sql
+│   │   ├── 20250217153124_add_tags
+│   │   │   └── migration.sql
+│   │   ├── 20250217164856_add_user_avatar_and_provider
+│   │   │   └── migration.sql
+│   │   └── migration_lock.toml
+│   └── schema.prisma
+├── public
+│   ├── index.html
+│   └── swagger.json
+├── src
+│   ├── app.ts
+│   ├── authentication.ts
+│   ├── config
+│   │   ├── env.ts
+│   │   ├── passport.ts
+│   │   └── prisma.ts
+│   ├── controllers
+│   │   ├── repoController.ts
+│   │   └── userController.ts
+│   ├── middleware
+│   │   └── validation.ts
+│   ├── models
+│   ├── routes
+│   │   ├── repoRoutes.ts
+│   │   ├── routes.ts
+│   │   ├── user.ts
+│   │   └── userRoutes.ts
+│   ├── server.ts
+│   ├── services
+│   │   ├── repoService.ts
+│   │   └── userService.ts
+│   ├── types
+│   │   ├── authentication.ts
+│   │   ├── passport-gitlab2.d.ts
+│   │   └── user.ts
+│   └── utils
+│       └── logger.ts
+├── tsconfig.json
+└── tsoa.json
+
+59 directories, 55 files
+
+
+
+--------------------------------------------------------------------------------
+tsconfig.json:
+--------------------------------------------------------------------------------
+{
+  "compilerOptions": {
+    "target": "ES2021",
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "resolveJsonModule": true,
+    "lib": ["ES2021"],
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/.pnpm/@types/*",
+      "node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client"
+    ],
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
+
+
+
+--------------------------------------------------------------------------------
+tsoa.json:
+--------------------------------------------------------------------------------
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/**/*Controller.ts"],
+  "spec": {
+    "outputDirectory": "public",
+    "specVersion": 3,
+    "securityDefinitions": {
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "routes": {
+    "routesDir": "src/routes",
+    "middleware": "express",
+    "authenticationModule": "src/authentication.ts"
+  },
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
+  }
+}
+
+
+
+--------------------------------------------------------------------------------
+.env.example:
+--------------------------------------------------------------------------------
+# Database Configuration
+DB_USER=user
+DB_PASSWORD=password
+DB_NAME=reporiot_db
+DB_HOST=db
+DB_PORT=5432
+DATABASE_URL="postgresql://${DB_USER:-user}:${DB_PASSWORD:-password}@${DB_HOST:-db}:${DB_PORT:-5432}/${DB_NAME:-reporiot_db}"
+
+# Server Configuration
+PORT=5050
+NODE_ENV=development
+
+# GitHub OAuth
+GITHUB_CLIENT_ID=xxxxxxxxxxxxxxxx
+GITHUB_CLIENT_SECRET=yyyyyyyyyyyyyyyyyyyy
+GITHUB_CALLBACK_URL=http://localhost:${PORT:-5050}/api/users/auth/github/callback
+
+# Session Secret
+SESSION_SECRET="something_secure"
+
+
+--------------------------------------------------------------------------------
+Dockerfile:
+--------------------------------------------------------------------------------
+# Node.jsの公式イメージを使用
+FROM node:23
+
+# pnpmをインストール
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
+# 作業ディレクトリを指定
+WORKDIR /usr/src/app
+
+# package.jsonとprismaスキーマをコンテナにコピー
+COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma/
+
+# 必要なパッケージをインストール
+RUN pnpm install --frozen-lockfile
+
+# Prisma Clientを生成
+RUN pnpm exec prisma generate
+
+# アプリケーションコードをコンテナにコピー
+COPY . .
+
+# Prisma Clientを生成
+RUN pnpm exec prisma generate
+
+# TypeScriptをビルドしてSwaggerドキュメントを生成
+RUN pnpm run build
+
+# publicディレクトリが存在することを確認
+RUN mkdir -p public
+
+# 環境変数PORTをコンテナ内に設定
+EXPOSE ${PORT:-5050}
+
+# コンテナ起動時に実行するコマンド
+CMD ["pnpm", "start"]
+
+
+
+--------------------------------------------------------------------------------
+docker-compose.yml:
+--------------------------------------------------------------------------------
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${PORT:-5050}:${PORT:-5050}"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-user}:${DB_PASSWORD:-password}@${DB_HOST:-db}:${DB_PORT:-5432}/${DB_NAME:-reporiot_db}
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/public
+    networks:
+      - app-network
+
+  db:
+    image: postgres:17
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-reporiot_db}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-user} -d ${DB_NAME:-reporiot_db}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge
+
+
+
+--------------------------------------------------------------------------------
+package.json:
+--------------------------------------------------------------------------------
+{
+  "name": "backend-repo",
+  "version": "1.0.0",
+  "description": "Backend service with Swagger documentation and Prisma ORM",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "build": "tsoa spec-and-routes && tsc",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "dev": "nodemon -e ts --exec \"tsoa spec-and-routes && ts-node\" src/server.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.3.1",
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.8",
+    "@types/swagger-ui-express": "^4.1.7",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.0.1",
+    "jsonwebtoken": "^9.0.2",
+    "passport": "^0.7.0",
+    "passport-github2": "^0.1.12",
+    "passport-gitlab2": "^5.0.0",
+    "swagger-ui-express": "^5.0.1",
+    "tsoa": "^6.6.0",
+    "typescript": "^5.2.2",
+    "winston": "^3.17.0",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@tsoa/runtime": "^6.6.0",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-session": "^1.18.1",
+    "@types/node": "^20.11.19",
+    "@types/passport": "^1.0.17",
+    "@types/passport-github2": "^1.2.9",
+    "glob": "^11.0.1",
+    "nodemon": "^3.0.2",
+    "prisma": "^6.3.1",
+    "ts-node": "^10.9.2"
+  },
+  "pnpm": {
+    "ignoredBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "@scarf/scarf",
+      "bcrypt",
+      "prisma"
+    ]
+  },
+  "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af"
+}
+
+
+
+--------------------------------------------------------------------------------
+prisma/schema.prisma:
+--------------------------------------------------------------------------------
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-1.1.x", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  username    String
+  githubId    String?  @unique
+  gitlabId    String?  @unique
+  accessToken String?
+  name        String?
+  avatarUrl   String?
+  password    String?
+  provider    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  repos       Repo[]
+}
+
+model Repo {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  url         String
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  stars       Int      @default(0)
+  forks       Int      @default(0)
+  language    String?
+  tags        Tag[]    @relation("RepoTags")
+}
+
+model Tag {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  repos       Repo[]   @relation("RepoTags")
+}
+
+
+
+--------------------------------------------------------------------------------
+src/middleware/validation.ts:
+--------------------------------------------------------------------------------
+import { Request, Response, NextFunction } from 'express';
+import { body, validationResult } from 'express-validator';
+
+export const validateUser = [
+  body('email')
+    .isEmail()
+    .withMessage('Invalid email format')
+    .normalizeEmail(),
+  body('username')
+    .trim()
+    .isLength({ min: 3 })
+    .withMessage('Username must be at least 3 characters long')
+    .matches(/^[a-zA-Z0-9_-]+$/)
+    .withMessage('Username can only contain letters, numbers, underscores and hyphens'),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed');
+      (error as any).status = 400;
+      (error as any).details = errors.array();
+      return next(error);
+    }
+    next();
+  }
+];
+
+export const validateRepository = [
+  body('name')
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage('Repository name is required')
+    .matches(/^[a-zA-Z0-9_-]+$/)
+    .withMessage('Repository name can only contain letters, numbers, underscores and hyphens'),
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 500 })
+    .withMessage('Description must not exceed 500 characters'),
+  (req: Request, res: Response, next: NextFunction) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed');
+      (error as any).status = 400;
+      (error as any).details = errors.array();
+      return next(error);
+    }
+    next();
+  }
+];
+--------------------------------------------------------------------------------
+src/types/authentication.ts:
+--------------------------------------------------------------------------------
+import { Request, Response } from 'express';
+import { User } from './user';
+
+export type AuthenticationResponse = Response | void;
+
+export type ExpressAuthenticationFunction = (
+  request: Request,
+  name: string,
+  scopes: string[],
+  response?: Response
+) => Promise<User>;
+
+declare global {
+  namespace Express {
+    interface User {
+      id: number;
+      email: string;
+      username: string;
+      githubId: string | null;
+      accessToken: string | null;
+      name: string | null;
+      password: string | null;
+      createdAt: Date;
+      updatedAt: Date;
+    }
+  }
+}
+--------------------------------------------------------------------------------
+src/types/passport-gitlab2.d.ts:
+--------------------------------------------------------------------------------
+declare module 'passport-gitlab2' {
+  import { Strategy as PassportStrategy } from 'passport';
+  import { Request } from 'express';
+
+  export interface StrategyOptions {
+    clientID: string;
+    clientSecret: string;
+    callbackURL: string;
+    baseURL?: string;
+    scope?: string[];
+  }
+
+  export interface StrategyOptionsWithRequest extends StrategyOptions {
+    passReqToCallback: true;
+  }
+
+  export interface Profile {
+    provider: string;
+    id: string;
+    username: string;
+    displayName: string;
+    name: {
+      familyName: string;
+      givenName: string;
+      middleName?: string;
+    };
+    emails: Array<{
+      value: string;
+      type?: string;
+    }>;
+    photos: Array<{
+      value: string;
+    }>;
+    _raw: string;
+    _json: any;
+  }
+
+  export type VerifyFunction = (
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done: (error: any, user?: any, info?: any) => void
+  ) => void;
+
+  export type VerifyFunctionWithRequest = (
+    req: Request,
+    accessToken: string,
+    refreshToken: string,
+    profile: Profile,
+    done: (error: any, user?: any, info?: any) => void
+  ) => void;
+
+  export class Strategy extends PassportStrategy {
+    constructor(options: StrategyOptions, verify: VerifyFunction);
+    constructor(options: StrategyOptionsWithRequest, verify: VerifyFunctionWithRequest);
+    name: string;
+    authenticate(req: Request, options?: any): void;
+  }
+}
+--------------------------------------------------------------------------------
+src/types/user.ts:
+--------------------------------------------------------------------------------
+export interface User {
+  id: number;
+  email: string;
+  username: string;
+  githubId: string | null;
+  accessToken: string | null;
+  name: string | null;
+  password: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CreateUserRequest {
+  provider: 'github' | 'gitlab';
+  providerId: string;
+  accessToken: string;
+  email: string;  // format: email
+  username: string;  // minLength: 3
+  name?: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  message: string;
+  token: string;
+}
+--------------------------------------------------------------------------------
+src/config/prisma.ts:
+--------------------------------------------------------------------------------
+import { PrismaClient } from '@prisma/client';
+import { env } from './env';
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: {
+      url: env.DATABASE_URL
+    }
+  }
+});
+
+export default prisma;
+--------------------------------------------------------------------------------
+src/config/passport.ts:
+--------------------------------------------------------------------------------
+import passport from 'passport';
+import { Strategy as GitHubStrategy } from 'passport-github2';
+import { Strategy as GitLabStrategy } from 'passport-gitlab2';
+import { env } from './env';
+import prisma from './prisma';
+import bcrypt from 'bcrypt';
+import { logger } from '../utils/logger';
+import { User as PrismaUser } from '@prisma/client';
+import { Profile as GitHubProfile } from 'passport-github2';
+import { Profile as GitLabProfile } from 'passport-gitlab2';
+
+interface OAuthProfile {
+  id: string;
+  username?: string;
+  displayName?: string;
+  emails?: Array<{ value: string }>;
+  photos?: Array<{ value: string }>;
+  provider: 'github' | 'gitlab';
+}
+
+type User = PrismaUser;
+
+passport.serializeUser((user, done) => {
+  try {
+    done(null, user.id);
+  } catch (error) {
+    logger.error('Error serializing user:', error);
+    done(error, null);
+  }
+});
+
+passport.deserializeUser(async (id: number, done: (err: any, user?: Express.User | false | null) => void) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        username: true,
+        githubId: true,
+        gitlabId: true,
+        name: true,
+        avatarUrl: true,
+        accessToken: true,
+        provider: true
+      }
+    });
+
+    if (!user) {
+      logger.warn(`User not found for id: ${id}`);
+      return done(null, false);
+    }
+
+    done(null, user);
+  } catch (error) {
+    logger.error('Error deserializing user:', error);
+    done(error, null);
+  }
+});
+
+async function handleOAuthProfile(
+  accessToken: string,
+  refreshToken: string,
+  profile: OAuthProfile,
+  done: (error: any, user?: any) => void
+) {
+  try {
+    const email = profile.emails?.[0]?.value;
+    if (!email) {
+      return done(new Error('No email found in profile'));
+    }
+
+    const avatarUrl = profile.photos?.[0]?.value;
+    const username = profile.username || profile.displayName || email.split('@')[0];
+    
+    const updateData: any = {
+      email,
+      username,
+      name: profile.displayName || username,
+      avatarUrl,
+      accessToken,
+      provider: profile.provider,
+    };
+
+    if (profile.provider === 'github') {
+      updateData.githubId = profile.id;
+    } else if (profile.provider === 'gitlab') {
+      updateData.gitlabId = profile.id;
+    }
+
+    const user = await prisma.user.upsert({
+      where: {
+        email,
+      },
+      update: updateData,
+      create: updateData,
+    });
+
+    done(null, user);
+  } catch (error) {
+    logger.error('Error in OAuth callback:', error);
+    done(error);
+  }
+}
+
+passport.use(new GitHubStrategy(
+  {
+    clientID: env.GITHUB_CLIENT_ID,
+    clientSecret: env.GITHUB_CLIENT_SECRET,
+    callbackURL: env.GITHUB_CALLBACK_URL,
+    scope: ['user:email', 'read:user']
+  },
+  async (accessToken: string, refreshToken: string, profile: GitHubProfile, done: (error: any, user?: any) => void) => {
+    await handleOAuthProfile(accessToken, refreshToken, { ...profile, provider: 'github' }, done);
+  }
+));
+
+passport.use(new GitLabStrategy(
+  {
+    clientID: env.GITLAB_CLIENT_ID,
+    clientSecret: env.GITLAB_CLIENT_SECRET,
+    callbackURL: env.GITLAB_CALLBACK_URL,
+    scope: ['read_user']
+  },
+  async (accessToken: string, refreshToken: string, profile: GitLabProfile, done: (error: any, user?: any) => void) => {
+    await handleOAuthProfile(accessToken, refreshToken, { ...profile, provider: 'gitlab' }, done);
+  }
+));
+--------------------------------------------------------------------------------
+src/config/env.ts:
+--------------------------------------------------------------------------------
+import { z } from 'zod';
+
+const envSchema = z.object({
+  // Database
+  DATABASE_URL: z.string(),
+  DB_USER: z.string(),
+  DB_PASSWORD: z.string(),
+  DB_NAME: z.string(),
+  DB_PORT: z.string(),
+
+  // Server
+  PORT: z.string(),
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+
+  // GitHub OAuth
+  GITHUB_CLIENT_ID: z.string(),
+  GITHUB_CLIENT_SECRET: z.string(),
+  GITHUB_CALLBACK_URL: z.string(),
+
+  // GitLab OAuth
+  GITLAB_CLIENT_ID: z.string(),
+  GITLAB_CLIENT_SECRET: z.string(),
+  GITLAB_CALLBACK_URL: z.string(),
+
+  // Session
+  SESSION_SECRET: z.string(),
+});
+
+function validateEnv() {
+  try {
+    const env = envSchema.parse(process.env);
+    return env;
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const missingVars = error.errors.map(err => err.path.join('.'));
+      throw new Error(`Missing or invalid environment variables: ${missingVars.join(', ')}`);
+    }
+    throw error;
+  }
+}
+
+export const env = validateEnv();
+--------------------------------------------------------------------------------
+src/app.ts:
+--------------------------------------------------------------------------------
+import express, { Response as ExResponse, Request as ExRequest, NextFunction } from 'express';
+import cors from 'cors';
+import { env } from './config/env';
+import passport from 'passport';
+import session from 'express-session';
+import swaggerUi from 'swagger-ui-express';
+import userRoutes from './routes/userRoutes';
+import repoRoutes from './routes/repoRoutes';
+import './config/passport';
+
+// Import swagger document
+const swaggerDocument = require('../public/swagger.json');
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Session and Passport
+app.use(session({
+  secret: env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Serve static files from public directory
+app.use(express.static('public'));
+
+// Routes
+app.get('/', (req, res) => {
+  res.sendFile('index.html', { root: './public' });
+});
+
+app.use('/api/users', userRoutes);
+app.use('/api/repos', repoRoutes);
+
+// Global error handler
+app.use(function errorHandler(err: any, req: ExRequest, res: ExResponse, next: NextFunction): ExResponse | void {
+  const status = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  
+  // Log error for debugging (consider using a proper logging service in production)
+  console.error(`Error ${status}: ${message}`, {
+    path: req.path,
+    method: req.method,
+    error: err,
+    stack: err.stack
+  });
+
+  return res.status(status).json({
+    status: 'error',
+    message: message,
+    details: err.details || [],
+    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+  });
+});
+
+// Swagger documentation
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+export default app;
+--------------------------------------------------------------------------------
+src/authentication.ts:
+--------------------------------------------------------------------------------
+import { Request, Response } from 'express';
+import { User } from './types/user';
+import { ExpressAuthenticationFunction } from './types/authentication';
+
+export function expressAuthentication(
+  request: Request,
+  securityName: string,
+  scopes?: string[],
+  response?: Response
+): Promise<User> {
+  if (securityName === 'jwt') {
+    return new Promise((resolve, reject) => {
+      if (!request.user) {
+        return reject(new Error('Not authenticated'));
+      }
+      return resolve(request.user as User);
+    });
+  }
+  return Promise.reject(new Error('Invalid security name'));
+}
+
+export const expressAuthenticationRecasted: ExpressAuthenticationFunction = (
+  request: Request,
+  name: string,
+  scopes: string[],
+  response?: Response
+) => expressAuthentication(request, name, scopes, response);
+--------------------------------------------------------------------------------
+src/utils/logger.ts:
+--------------------------------------------------------------------------------
+import winston from 'winston';
+import { env } from '../config/env';
+
+const format = winston.format.combine(
+  winston.format.timestamp(),
+  winston.format.errors({ stack: true }),
+  winston.format.json()
+);
+
+const logger = winston.createLogger({
+  level: env.NODE_ENV === 'production' ? 'info' : 'debug',
+  format,
+  defaultMeta: { service: 'repo-riot' },
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
+    }),
+  ],
+});
+
+// 開発環境では詳細なログを出力
+if (env.NODE_ENV !== 'production') {
+  logger.add(
+    new winston.transports.File({
+      filename: 'logs/error.log',
+      level: 'error',
+      format,
+    })
+  );
+  logger.add(
+    new winston.transports.File({
+      filename: 'logs/combined.log',
+      format,
+    })
+  );
+}
+
+export { logger };
+--------------------------------------------------------------------------------
+src/controllers/repoController.ts:
+--------------------------------------------------------------------------------
+import { Request, Response } from 'express';
+import * as repoService from '../services/repoService';
+
+export const createRepo = async (req: Request, res: Response) => {
+  try {
+    const repo = await repoService.createRepo({
+      ...req.body,
+      userId: req.body.userId // In production, this should come from authenticated user session
+    });
+    res.status(201).json(repo);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create repository' });
+  }
+};
+
+export const getRepo = async (req: Request, res: Response) => {
+  try {
+    const repoId = parseInt(req.params.id);
+    const repo = await repoService.getRepoById(repoId);
+    if (!repo) {
+      return res.status(404).json({ error: 'Repository not found' });
+    }
+    res.json(repo);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get repository' });
+  }
+};
+
+export const getUserRepos = async (req: Request, res: Response) => {
+  try {
+    const userId = parseInt(req.params.userId);
+    const repos = await repoService.getUserRepos(userId);
+    res.json(repos);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to get user repositories' });
+  }
+};
+
+/**
+ * @swagger
+ * /repos/{id}:
+ *   put:
+ *     summary: Update repository
+ *     description: Update a repository's details
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               url:
+ *                 type: string
+ *               stars:
+ *                 type: integer
+ *               forks:
+ *                 type: integer
+ *               language:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Repository updated successfully
+ *       404:
+ *         description: Repository not found
+ */
+export const updateRepo = async (req: Request, res: Response) => {
+  try {
+    const repoId = parseInt(req.params.id);
+    const repo = await repoService.updateRepo(repoId, req.body);
+    res.json(repo);
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
+      res.status(404).json({ error: 'Repository not found' });
+    } else {
+      res.status(500).json({ error: 'Failed to update repository' });
+    }
+  }
+};
+--------------------------------------------------------------------------------
+src/controllers/userController.ts:
+--------------------------------------------------------------------------------
+import { Controller, Route, Post, Get, Put, Path, Body, Response, Example, Security, Request } from '@tsoa/runtime';
+import { User, CreateUserRequest, AuthResponse } from '../types/user';
+import * as userService from '../services/userService';
+import { Request as ExpressRequest } from 'express';
+import { Session } from 'express-session';
+import { LogOutOptions } from 'passport';
+
+interface UserAuthRequest extends ExpressRequest {
+  user?: User;
+  logout: {
+    (options: LogOutOptions, done: (err: any) => void): void;
+    (done: (err: any) => void): void;
+  };
+}
+
+@Route('users')
+export class UserController extends Controller {
+  /**
+   * Create a new user via GitHub/GitLab
+   */
+  @Post()
+  @Response(201, 'Created')
+  @Example<AuthResponse>({
+    user: {
+      id: 1,
+      email: 'user@example.com',
+      username: 'username',
+      githubId: null,
+      accessToken: null,
+      name: null,
+      password: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    },
+    message: 'User created successfully',
+    token: 'jwt.token.here'
+  })
+  public async createUser(@Body() requestBody: CreateUserRequest): Promise<AuthResponse> {
+    const user = await userService.createUser(requestBody);
+    const token = userService.generateToken(user.id);
+    
+    return {
+      user,
+      message: 'User created successfully',
+      token
+    };
+  }
+
+  /**
+   * Get user profile by ID
+   */
+  @Get('{userId}')
+  @Response(404, 'Not Found')
+  @Example<User>({
+    id: 1,
+    email: 'user@example.com',
+    username: 'username',
+    githubId: null,
+    accessToken: null,
+    name: null,
+    password: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  })
+  public async getUserProfile(@Path() userId: number): Promise<User> {
+    const user = await userService.getUserById(userId);
+    if (!user) {
+      this.setStatus(404);
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  /**
+   * Update user profile
+   */
+  @Put('{userId}')
+  @Response(200, 'Success')
+  @Response(404, 'Not Found')
+  @Example<User>({
+    id: 1,
+    email: 'updated@example.com',
+    username: 'updated_username',
+    githubId: null,
+    accessToken: null,
+    name: 'Updated Name',
+    password: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  })
+  public async updateUserProfile(
+    @Path() userId: number,
+    @Body() requestBody: Partial<CreateUserRequest>
+  ): Promise<User> {
+    const user = await userService.updateUser(userId, requestBody);
+    if (!user) {
+      this.setStatus(404);
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  /**
+   * Get current authenticated user
+   */
+  @Get('me')
+  @Security('jwt')
+  @Response(401, 'Not Authenticated')
+  public async getCurrentUser(@Request() request: UserAuthRequest): Promise<User> {
+    if (!request.user) {
+      this.setStatus(401);
+      throw new Error('Not authenticated');
+    }
+    return request.user as User;
+  }
+
+  /**
+   * GitHub OAuth callback
+   * @swagger
+   * /users/auth/github/callback:
+   *   get:
+   *     summary: GitHub OAuth callback
+   *     description: GitHub OAuth認証後のコールバック
+   *     responses:
+   *       302:
+   *         description: GitHub OAuth認証が成功し、ダッシュボードにリダイレクトされる
+   */
+  @Get('auth/github/callback')
+  public async githubCallback(@Request() req: UserAuthRequest): Promise<void> {
+    const user = req.user;
+
+    if (!user) {
+      this.setStatus(401);
+      throw new Error('Authentication failed');
+    }
+
+    const token = userService.generateToken(user.id);
+    this.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=Lax`);
+    this.setHeader('Location', '/dashboard');
+    this.setStatus(302);
+  }
+
+  /**
+   * Login user
+   * @swagger
+   * /users/auth/login:
+   *   post:
+   *     summary: GitHub/GitLabでログイン
+   *     description: GitHubまたはGitLabアカウントを使ってログイン
+   *     responses:
+   *       200:
+   *         description: ログイン成功、ユーザー情報とJWTトークンが返される
+   */
+  @Post('auth/login')
+  public async login(@Request() req: UserAuthRequest): Promise<AuthResponse> {
+    const user = req.user;
+    if (!user) {
+      this.setStatus(401);
+      throw new Error('Authentication failed');
+    }
+
+    const token = userService.generateToken(user.id);
+    this.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Secure; SameSite=Lax`);
+    return {
+      message: 'Login successful',
+      user,
+      token
+    };
+  }
+
+  /**
+   * Logout user
+   * @swagger
+   * /users/auth/logout:
+   *   post:
+   *     summary: ログアウト
+   *     description: 現在のセッションを終了し、認証トークンを無効化
+   *     responses:
+   *       200:
+   *         description: ログアウト成功
+   *       500:
+   *         description: ログアウト処理に失敗
+   */
+  @Post('auth/logout')
+  public async logout(@Request() req: UserAuthRequest): Promise<{ message: string }> {
+    await new Promise<void>((resolve, reject) => {
+      req.logout({ keepSessionInfo: false }, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+
+    this.setHeader('Set-Cookie', 'token=; HttpOnly; Path=/; Max-Age=0; Secure; SameSite=Lax');
+    return { message: 'Logout successful' };
+  }
+}
+--------------------------------------------------------------------------------
+src/server.ts:
+--------------------------------------------------------------------------------
+import app from './app';
+import prisma from './config/prisma';
+import { env } from './config/env';
+
+const port = env.PORT;
+
+const startServer = async () => {
+  try {
+    await prisma.$connect();
+    console.log('Successfully connected to database');
+
+    app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+      console.log(`Swagger documentation available at http://localhost:${port}/api-docs`);
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
+--------------------------------------------------------------------------------
+src/routes/repoRoutes.ts:
+--------------------------------------------------------------------------------
+import express from 'express';
+import * as repoController from '../controllers/repoController';
+
+const router = express.Router();
+
+router.post('/', repoController.createRepo);
+/**
+ * @swagger
+ * /repos/{id}:
+ *   get:
+ *     summary: Get repository by ID
+ *     description: Retrieve a repository's details by its ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Repository details successfully retrieved
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 name:
+ *                   type: string
+ *                 description:
+ *                   type: string
+ *                 url:
+ *                   type: string
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     username:
+ *                       type: string
+ *       404:
+ *         description: Repository not found
+ */
+router.get('/:id', repoController.getRepo);
+router.get('/user/:userId', repoController.getUserRepos);
+router.put('/:id', repoController.updateRepo);
+
+export default router;
+--------------------------------------------------------------------------------
+src/routes/userRoutes.ts:
+--------------------------------------------------------------------------------
+import express from 'express';
+import passport from 'passport';
+import { UserController } from '../controllers/userController';
+import { Prisma } from '@prisma/client';
+
+const router = express.Router();
+const userController = new UserController();
+
+/**
+ * @swagger
+ * /users/auth/github:
+ *   get:
+ *     summary: GitHub認証
+ *     description: GitHub OAuth認証を開始
+ *     responses:
+ *       302:
+ *         description: GitHub認証ページにリダイレクトされる
+ */
+router.get('/auth/github', passport.authenticate('github', { scope: ['user:email', 'read:user'] }));
+
+/**
+ * @swagger
+ * /users/auth/github/callback:
+ *   get:
+ *     summary: GitHub OAuth callback
+ *     description: GitHub OAuth認証後のコールバック処理
+ *     responses:
+ *       302:
+ *         description: 認証成功時にダッシュボードへリダイレクト
+ *       401:
+ *         description: 認証失敗
+ */
+router.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/login', failureMessage: true }),
+  async (req, res) => {
+    await userController.githubCallback(req);
+    res.redirect('/');
+  }
+);
+
+/**
+ * @swagger
+ * /users/auth/gitlab:
+ *   get:
+ *     summary: GitLab認証
+ *     description: GitLab OAuth認証を開始
+ *     responses:
+ *       302:
+ *         description: GitLab認証ページにリダイレクトされる
+ */
+router.get('/auth/gitlab', passport.authenticate('gitlab', { scope: ['read_user'] }));
+
+/**
+ * @swagger
+ * /users/auth/gitlab/callback:
+ *   get:
+ *     summary: GitLab OAuth callback
+ *     description: GitLab OAuth認証後のコールバック処理
+ *     responses:
+ *       302:
+ *         description: 認証成功時にダッシュボードへリダイレクト
+ *       401:
+ *         description: 認証失敗
+ */
+router.get('/auth/gitlab/callback',
+  passport.authenticate('gitlab', { failureRedirect: '/login', failureMessage: true }),
+  async (req, res) => {
+    await userController.githubCallback(req);
+    res.redirect('/');
+  }
+);
+
+/**
+ * @swagger
+ * /users/auth/register:
+ *   post:
+ *     summary: 新規ユーザー登録
+ *     description: GitHub/GitLabでの新規ユーザー登録
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - username
+ *               - provider
+ *               - providerId
+ *               - accessToken
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               username:
+ *                 type: string
+ *                 minLength: 3
+ *               name:
+ *                 type: string
+ *               provider:
+ *                 type: string
+ *                 enum: [github, gitlab]
+ *               providerId:
+ *                 type: string
+ *                 description: GitHubまたはGitLabのユーザーID
+ *               accessToken:
+ *                 type: string
+ *                 description: OAuthアクセストークン
+ *     responses:
+ *       201:
+ *         description: ユーザーが正常に作成され、JWTトークンが返される
+ *       400:
+ *         description: 入力データが不正
+ *       409:
+ *         description: メールアドレスまたはユーザー名が既に使用されている
+ */
+router.post('/auth/register', async (req, res) => {
+  try {
+    const response = await userController.createUser(req.body);
+    res.status(201).json(response);
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      res.status(409).json({ message: 'Email or username already exists' });
+    } else {
+      res.status(400).json({ message: 'Invalid request data' });
+    }
+  }
+});
+
+/**
+ * @swagger
+ * /users/auth/login:
+ *   post:
+ *     summary: GitHub/GitLabでログイン
+ *     description: GitHubまたはGitLabでユーザーがログイン
+ *     responses:
+ *       200:
+ *         description: ログイン成功、ユーザー情報とJWTトークンが返される
+ *       401:
+ *         description: 認証失敗
+ */
+router.post('/auth/login', async (req, res) => {
+  const response = await userController.login(req);
+  res.json(response);
+});
+
+/**
+ * @swagger
+ * /users/auth/logout:
+ *   post:
+ *     summary: ログアウト
+ *     description: 現在のセッションを終了し、認証トークンを無効化
+ *     responses:
+ *       200:
+ *         description: ログアウト成功
+ *       500:
+ *         description: ログアウト処理に失敗
+ */
+router.post('/auth/logout', async (req, res) => {
+  const response = await userController.logout(req);
+  res.json(response);
+});
+
+export default router;
+--------------------------------------------------------------------------------
+src/routes/user.ts:
+--------------------------------------------------------------------------------
+import express from 'express';
+import { Request, Response } from 'express';
+
+const router = express.Router();
+
+/**
+ * @swagger
+ * /users:
+ *   get:
+ *     summary: Get all users
+ *     description: Retrieve a list of all users
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *       500:
+ *         description: Server error
+ */
+router.get('/users', (req: Request, res: Response) => {
+  // ユーザー一覧の取得処理
+  res.status(200).json({ message: 'User list' });
+});
+
+export default router;
+--------------------------------------------------------------------------------
+src/services/repoService.ts:
+--------------------------------------------------------------------------------
+import prisma from '../config/prisma';
+import { Repo } from '@prisma/client';
+
+export const createRepo = async (data: {
+  name: string;
+  description?: string;
+  url: string;
+  userId: number;
+  language?: string;
+}): Promise<Repo> => {
+  return prisma.repo.create({
+    data
+  });
+};
+
+export const getRepoById = async (id: number): Promise<Repo | null> => {
+  return prisma.repo.findUnique({
+    where: { id },
+    include: { user: true }
+  });
+};
+
+export const getUserRepos = async (userId: number): Promise<Repo[]> => {
+  return prisma.repo.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' }
+  });
+};
+
+export const updateRepo = async (
+  id: number,
+  data: {
+    name?: string;
+    description?: string;
+    url?: string;
+    stars?: number;
+    forks?: number;
+    language?: string;
+  }
+): Promise<Repo> => {
+  return prisma.repo.update({
+    where: { id },
+    data
+  });
+};
+--------------------------------------------------------------------------------
+src/services/userService.ts:
+--------------------------------------------------------------------------------
+import prisma from '../config/prisma';
+import { User } from '@prisma/client';
+import { CreateUserRequest } from '../types/user';
+import jwt from 'jsonwebtoken';
+import { env } from '../config/env';
+
+export const createUser = async (data: CreateUserRequest): Promise<User> => {
+  // バリデーション
+  if (!data.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+    throw new Error('Invalid email format');
+  }
+  if (data.username.length < 3) {
+    throw new Error('Username must be at least 3 characters long');
+  }
+
+  // プロバイダーの確認
+  if (!['github', 'gitlab'].includes(data.provider)) {
+    throw new Error('Invalid provider');
+  }
+
+  return prisma.user.create({
+    data: {
+      email: data.email,
+      username: data.username,
+      name: data.name,
+      [data.provider === 'github' ? 'githubId' : 'gitlabId']: data.providerId,
+      accessToken: data.accessToken
+    }
+  });
+};
+
+export const getUserByEmail = async (email: string): Promise<User | null> => {
+  return prisma.user.findUnique({
+    where: { email }
+  });
+};
+
+export const getUserById = async (id: number): Promise<User | null> => {
+  return prisma.user.findUnique({
+    where: { id }
+  });
+};
+
+export const updateUser = async (
+  id: number,
+  data: Partial<CreateUserRequest>
+): Promise<User> => {
+  return prisma.user.update({
+    where: { id },
+    data
+  });
+};
+
+export const getUserByGithubId = async (githubId: string): Promise<User | null> => {
+  return prisma.user.findUnique({
+    where: { githubId }
+  });
+};
+
+export const generateToken = (userId: number): string => {
+  return jwt.sign({ userId }, env.SESSION_SECRET, { expiresIn: '1h' });
+};
+
+export const verifyToken = (token: string): { userId: number } => {
+  return jwt.verify(token, env.SESSION_SECRET) as { userId: number };
+};

@@ -63,4 +63,6 @@ if (env.NODE_ENV !== 'production') {
   logger.info('Logger initialized in production mode');
 }
 
+export { logger };
+
 export default logger;

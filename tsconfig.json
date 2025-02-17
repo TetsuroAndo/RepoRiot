@@ -10,7 +10,11 @@
     "emitDecoratorMetadata": true,
     "resolveJsonModule": true,
     "lib": ["ES2021"],
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/.pnpm/@types/*",
+      "node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client"
+    ],
     "skipLibCheck": true
   },
   "include": ["src/**/*"],

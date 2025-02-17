@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github2';
-import { PrismaClient } from '@prisma/client';
+import { env } from './env';
+import prisma from './prisma';
 import { isDeepStrictEqual } from 'util';
 
 interface GitHubProfile {
@@ -16,8 +17,6 @@ interface User {
   email: string;
   accessToken?: string;
 }
-
-const prisma = new PrismaClient();
 
 passport.serializeUser((user: Express.User, done) => {
   done(null, (user as User).id);
@@ -35,9 +34,9 @@ passport.deserializeUser(async (id: number, done: (err: any, user?: Express.User
 });
 
 passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID ?? '',
-    clientSecret: process.env.GITHUB_CLIENT_SECRET ?? '',
-    callbackURL: process.env.GITHUB_CALLBACK_URL ?? 'http://localhost:3000/auth/github/callback'
+    clientID: env.GITHUB_CLIENT_ID,
+    clientSecret: env.GITHUB_CLIENT_SECRET,
+    callbackURL: env.GITHUB_CALLBACK_URL
   },
   async (accessToken: string, refreshToken: string, profile: GitHubProfile, done: (error: any, user?: any) => void) => {
     try {

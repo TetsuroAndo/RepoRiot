@@ -1,5 +1,6 @@
 import express, { Response as ExResponse, Request as ExRequest, NextFunction } from 'express';
 import cors from 'cors';
+import { env } from './config/env';
 import passport from 'passport';
 import session from 'express-session';
 import swaggerUi from 'swagger-ui-express';
@@ -19,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Session and Passport
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  secret: env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false
 }));

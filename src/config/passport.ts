@@ -33,6 +33,8 @@ passport.deserializeUser(async (id: number, done: (err: any, user?: Express.User
   }
 });
 
+import bcrypt from 'bcrypt';
+
 passport.use(new GitHubStrategy({
     clientID: env.GITHUB_CLIENT_ID,
     clientSecret: env.GITHUB_CLIENT_SECRET,
@@ -46,24 +48,42 @@ passport.use(new GitHubStrategy({
       }
 
       let user = await prisma.user.findUnique({
-        where: { githubId: profile.id }
+        where: { githubId: profile.id },
+        select: {
+          id: true,
+          githubId: true,
+          username: true,
+          email: true,
+          accessToken: true
+        }
       });
 
       if (!user) {
+        const hashedToken = await bcrypt.hash(accessToken, 10);
         user = await prisma.user.create({
           data: {
             githubId: profile.id,
             username: profile.username,
             email,
-            accessToken
+            accessToken: hashedToken
           }
         });
       } else {
-        // Only update if access token has changed
-        if (!isDeepStrictEqual(user.accessToken, accessToken)) {
+        // アクセストークンが変更されていた場合に更新
+        if (user.accessToken) {
+          const isMatch = await bcrypt.compare(accessToken, user.accessToken);
+          if (!isMatch) {
+            const hashedToken = await bcrypt.hash(accessToken, 10);
+            user = await prisma.user.update({
+              where: { id: user.id },
+              data: { accessToken: hashedToken }
+            });
+          }
+        } else {
+          const hashedToken = await bcrypt.hash(accessToken, 10);
           user = await prisma.user.update({
             where: { id: user.id },
-            data: { accessToken }
+            data: { accessToken: hashedToken }
           });
         }
       }

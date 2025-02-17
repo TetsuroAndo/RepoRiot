@@ -5,6 +5,33 @@ import { RegisterRoutes } from './routes';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * /users:
+ *   post:
+ *     summary: Create a new user
+ *     description: Register a new user using GitHub OAuth.
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Invalid input data
+ */
+
 // GitHub OAuth認証ルート
 router.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
 

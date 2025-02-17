@@ -79,6 +79,24 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"Partial_CreateUserRequest_": {
+				"properties": {
+					"email": {
+						"type": "string"
+					},
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
 			}
 		},
 		"securitySchemes": {
@@ -117,8 +135,8 @@
 											"accessToken": null,
 											"name": null,
 											"password": null,
-											"createdAt": "2025-02-17T14:02:31.534Z",
-											"updatedAt": "2025-02-17T14:02:31.537Z"
+											"createdAt": "2025-02-17T15:37:49.950Z",
+											"updatedAt": "2025-02-17T15:37:49.951Z"
 										}
 									}
 								}
@@ -165,8 +183,8 @@
 											"accessToken": null,
 											"name": null,
 											"password": null,
-											"createdAt": "2025-02-17T14:02:31.539Z",
-											"updatedAt": "2025-02-17T14:02:31.539Z"
+											"createdAt": "2025-02-17T15:37:49.954Z",
+											"updatedAt": "2025-02-17T15:37:49.954Z"
 										}
 									}
 								}
@@ -190,6 +208,62 @@
 						}
 					}
 				]
+			},
+			"put": {
+				"operationId": "UpdateUserProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/User"
+								},
+								"examples": {
+									"Example 1": {
+										"value": {
+											"id": 1,
+											"email": "updated@example.com",
+											"username": "updated_username",
+											"githubId": null,
+											"accessToken": null,
+											"name": "Updated Name",
+											"password": null,
+											"createdAt": "2025-02-17T15:37:49.954Z",
+											"updatedAt": "2025-02-17T15:37:49.954Z"
+										}
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found"
+					}
+				},
+				"description": "Update user profile",
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_CreateUserRequest_"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/users/me": {

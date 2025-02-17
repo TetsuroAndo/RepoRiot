@@ -47,13 +47,14 @@ app.use(function errorHandler(err: any, req: ExRequest, res: ExResponse, next: N
   console.error(`Error ${status}: ${message}`, {
     path: req.path,
     method: req.method,
-    error: err
+    error: err,
+    stack: err.stack
   });
 
   return res.status(status).json({
     status: 'error',
     message: message,
-    // Only include stack trace in development
+    details: err.details || [],
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   });
 });

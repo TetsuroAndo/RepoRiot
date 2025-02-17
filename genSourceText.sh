@@ -46,7 +46,6 @@ for file in $FOUND_TS; do
   echo "$file:" >> "$OUTPUT_FILE"
   echo "--------------------------------------------------------------------------------" >> "$OUTPUT_FILE"
   cat "$file" >> "$OUTPUT_FILE"
-  echo -e "\n\n" >> "$OUTPUT_FILE"
 done
 
 cat "$OUTPUT_FILE" | pbcopy

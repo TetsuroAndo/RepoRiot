@@ -1,4 +1,4 @@
-import { Controller, Route, Post, Get, Path, Body, Response, Example, Security, Request } from '@tsoa/runtime';
+import { Controller, Route, Post, Get, Put, Path, Body, Response, Example, Security, Request } from '@tsoa/runtime';
 import { User, CreateUserRequest, AuthResponse } from '../types/user';
 import * as userService from '../services/userService';
 
@@ -46,6 +46,35 @@ export class UserController extends Controller {
   })
   public async getUserProfile(@Path() userId: number): Promise<User> {
     const user = await userService.getUserById(userId);
+    if (!user) {
+      this.setStatus(404);
+      throw new Error('User not found');
+    }
+    return user;
+  }
+
+  /**
+   * Update user profile
+   */
+  @Put('{userId}')
+  @Response(200, 'Success')
+  @Response(404, 'Not Found')
+  @Example<User>({
+    id: 1,
+    email: 'updated@example.com',
+    username: 'updated_username',
+    githubId: null,
+    accessToken: null,
+    name: 'Updated Name',
+    password: null,
+    createdAt: new Date(),
+    updatedAt: new Date()
+  })
+  public async updateUserProfile(
+    @Path() userId: number,
+    @Body() requestBody: Partial<CreateUserRequest>
+  ): Promise<User> {
+    const user = await userService.updateUser(userId, requestBody);
     if (!user) {
       this.setStatus(404);
       throw new Error('User not found');

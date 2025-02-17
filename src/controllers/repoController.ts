@@ -35,3 +35,53 @@ export const getUserRepos = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to get user repositories' });
   }
 };
+
+/**
+ * @swagger
+ * /repos/{id}:
+ *   put:
+ *     summary: Update repository
+ *     description: Update a repository's details
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               url:
+ *                 type: string
+ *               stars:
+ *                 type: integer
+ *               forks:
+ *                 type: integer
+ *               language:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Repository updated successfully
+ *       404:
+ *         description: Repository not found
+ */
+export const updateRepo = async (req: Request, res: Response) => {
+  try {
+    const repoId = parseInt(req.params.id);
+    const repo = await repoService.updateRepo(repoId, req.body);
+    res.json(repo);
+  } catch (error) {
+    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
+      res.status(404).json({ error: 'Repository not found' });
+    } else {
+      res.status(500).json({ error: 'Failed to update repository' });
+    }
+  }
+};

@@ -17,6 +17,11 @@ const envSchema = z.object({
   GITHUB_CLIENT_SECRET: z.string(),
   GITHUB_CALLBACK_URL: z.string(),
 
+  // GitLab OAuth
+  GITLAB_CLIENT_ID: z.string(),
+  GITLAB_CLIENT_SECRET: z.string(),
+  GITLAB_CALLBACK_URL: z.string(),
+
   // Session
   SESSION_SECRET: z.string(),
 });

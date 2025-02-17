@@ -11,13 +11,16 @@ export interface User {
 }
 
 export interface CreateUserRequest {
-  email: string;
-  username: string;
-  password?: string;
+  provider: 'github' | 'gitlab';
+  providerId: string;
+  accessToken: string;
+  email: string;  // format: email
+  username: string;  // minLength: 3
   name?: string;
 }
 
 export interface AuthResponse {
   user: User;
   message: string;
+  token: string;
 }

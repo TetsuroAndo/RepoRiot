@@ -13,9 +13,12 @@ model User {
   email       String   @unique
   username    String
   githubId    String?  @unique
+  gitlabId    String?  @unique
   accessToken String?
   name        String?
+  avatarUrl   String?
   password    String?
+  provider    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   repos       Repo[]

@@ -97,6 +97,26 @@
 				},
 				"type": "object",
 				"description": "Make all properties in T optional"
+			},
+			"AuthResponse": {
+				"properties": {
+					"user": {
+						"$ref": "#/components/schemas/User"
+					},
+					"message": {
+						"type": "string"
+					},
+					"token": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"user",
+					"message",
+					"token"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -135,8 +155,8 @@
 											"accessToken": null,
 											"name": null,
 											"password": null,
-											"createdAt": "2025-02-17T15:37:49.950Z",
-											"updatedAt": "2025-02-17T15:37:49.951Z"
+											"createdAt": "2025-02-17T16:51:50.861Z",
+											"updatedAt": "2025-02-17T16:51:50.862Z"
 										}
 									}
 								}
@@ -183,8 +203,8 @@
 											"accessToken": null,
 											"name": null,
 											"password": null,
-											"createdAt": "2025-02-17T15:37:49.954Z",
-											"updatedAt": "2025-02-17T15:37:49.954Z"
+											"createdAt": "2025-02-17T16:51:50.864Z",
+											"updatedAt": "2025-02-17T16:51:50.864Z"
 										}
 									}
 								}
@@ -229,8 +249,8 @@
 											"accessToken": null,
 											"name": "Updated Name",
 											"password": null,
-											"createdAt": "2025-02-17T15:37:49.954Z",
-											"updatedAt": "2025-02-17T15:37:49.954Z"
+											"createdAt": "2025-02-17T16:51:50.865Z",
+											"updatedAt": "2025-02-17T16:51:50.865Z"
 										}
 									}
 								}
@@ -306,15 +326,50 @@
 				"parameters": []
 			}
 		},
-		"/users/logout": {
-			"get": {
-				"operationId": "Logout",
+		"/users/auth/login": {
+			"post": {
+				"operationId": "Login",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
 					}
 				},
-				"description": "Logout current user",
+				"description": "Login user",
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/users/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Logout user",
 				"security": [],
 				"parameters": []
 			}

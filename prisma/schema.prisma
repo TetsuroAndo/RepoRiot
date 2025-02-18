@@ -74,6 +74,7 @@ model ArticleRating {
   id        Int      @id @default(autoincrement())
   userId    Int
   articleId Int
+  like      Boolean
   rating    Int // 評価値（例: 1から5の星評価）
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

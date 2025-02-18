@@ -22,6 +22,9 @@ const envSchema = z.object({
   GITLAB_CLIENT_SECRET: z.string(),
   GITLAB_CALLBACK_URL: z.string(),
 
+  // JWT
+  JWT_SECRET: z.string(),
+
   // Session
   SESSION_SECRET: z.string(),
 });

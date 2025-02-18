@@ -6,6 +6,7 @@ import session from 'express-session';
 import swaggerUi from 'swagger-ui-express';
 import userRoutes from './routes/userRoutes';
 import repoRoutes from './routes/repoRoutes';
+import dashboardRoutes from './routes/dashboard.routes';
 import './config/passport';
 
 // Import swagger document
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/users', userRoutes);
 app.use('/api/repos', repoRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Global error handler
 app.use(function errorHandler(err: any, req: ExRequest, res: ExResponse, next: NextFunction): ExResponse | void {
